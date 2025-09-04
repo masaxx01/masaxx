@@ -1,1 +1,102 @@
-
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>マリオパーティー2 コースター人生ログ</title>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* ページ全体のスタイル */
+    body {
+      font-family: sans-serif;
+      background-color: #ffffff;
+      color: #333333;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    /* 入力フォーム */
+    .entry-form {
+      border: 1px solid #e0e0e0;
+      padding: 20px;
+      margin-bottom: 40px;
+      background: #fafafa;
+      border-radius: 8px;
+    }
+    .entry-form label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+    .entry-form input[type="date"],
+    .entry-form input[type="number"],
+    .entry-form textarea {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .entry-form button {
+      padding: 10px 16px;
+      margin-right: 8px;
+      border: none;
+      border-radius: 4px;
+      background-color: #1976d2;
+      color: white;
+      cursor: pointer;
+    }
+    .entry-form button:hover {
+      background-color: #1565c0;
+    }
+    /* 表とグラフ */
+    #chart-container {
+      margin-bottom: 40px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 40px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: center;
+    }
+    th {
+      background-color: #f5f5f5;
+    }
+    .action-btn {
+      background: #e53935;
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .action-btn.edit {
+      background: #fdd835;
+      margin-right: 4px;
+    }
+    .action-btn:hover {
+      opacity: 0.9;
+    }
+    /* 総括セクション */
+    .summary {
+      border: 1px solid #e0e0e0;
+      padding: 20px;
+      background: #fafafa;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
