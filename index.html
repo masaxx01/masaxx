@@ -100,3 +100,182 @@
 </head>
 <body>
   <div class="container">
+    <h1>マリオパーティー2 コースター人生ログ</h1>
+
+    <!-- エントリーフォーム -->
+    <div class="entry-form">
+      <label for="date">日付</label>
+      <input type="date" id="date" />
+
+      <label for="stage">最終到達ステージ</label>
+      <input type="number" id="stage" min="1" />
+
+      <label for="summaryText">1日の総括</label>
+      <textarea id="summaryText" rows="4" placeholder="その日の出来事や感想を入力"></textarea>
+
+      <button id="addBtn">追加</button>
+      <button id="updateBtn" style="display:none;">更新</button>
+      <button id="cancelBtn" style="display:none;">キャンセル</button>
+    </div>
+
+    <!-- グラフ -->
+    <div id="chart-container">
+      <canvas id="stageChart"></canvas>
+    </div>
+
+    <!-- データテーブル -->
+    <table>
+      <thead>
+        <tr>
+          <th>日付</th>
+          <th>ステージ</th>
+          <th>総括</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody id="dataBody">
+        <!-- JSで動的に挿入 -->
+      </tbody>
+    </table>
+
+    <!-- 選択中エントリーの総括表示 -->
+    <div class="summary" id="daySummary">
+      <h2>選択中の日付の総括</h2>
+      <p id="summaryContent">エントリーを選択してください。</p>
+    </div>
+  </div>
+
+  <script>
+    // データ保存用
+    let entries = JSON.parse(localStorage.getItem('mp2Data') || '[]');
+    let editIndex = null;
+
+    // Chart.js初期化
+    const ctx = document.getElementById('stageChart').getContext('2d');
+    const chart = new Chart(ctx, {
+      type: 'line',
+      data: { labels: [], datasets: [{
+        label: 'ステージ到達数',
+        data: [],
+        borderColor: '#1976d2',
+        backgroundColor: 'rgba(25,118,210,0.2)',
+        fill: true,
+        tension: 0.3
+      }]},
+      options: {
+        scales: {
+          x: { 
+            type: 'time',
+            time: { unit: 'day', tooltipFormat: 'YYYY-MM-DD' },
+            title: { display: true, text: '日付' }
+          },
+          y: {
+            beginAtZero: true,
+            title: { display: true, text: 'ステージ' }
+          }
+        }
+      }
+    });
+
+    // 初期レンダリング
+    renderAll();
+
+    // イベント登録
+    document.getElementById('addBtn').onclick = addEntry;
+    document.getElementById('updateBtn').onclick = updateEntry;
+    document.getElementById('cancelBtn').onclick = cancelEdit;
+
+    function addEntry() {
+      const d = document.getElementById('date').value;
+      const s = parseInt(document.getElementById('stage').value);
+      const sm = document.getElementById('summaryText').value.trim();
+      if (!d || !s || !sm) return alert('全て入力してください');
+      entries.push({ date: d, stage: s, summary: sm });
+      saveAndRender();
+      clearForm();
+    }
+
+    function editEntry(i) {
+      editIndex = i;
+      const e = entries[i];
+      document.getElementById('date').value = e.date;
+      document.getElementById('stage').value = e.stage;
+      document.getElementById('summaryText').value = e.summary;
+      toggleFormButtons(true);
+    }
+
+    function updateEntry() {
+      const d = document.getElementById('date').value;
+      const s = parseInt(document.getElementById('stage').value);
+      const sm = document.getElementById('summaryText').value.trim();
+      if (!d || !s || !sm) return alert('全て入力してください');
+      entries[editIndex] = { date: d, stage: s, summary: sm };
+      saveAndRender();
+      clearForm();
+      toggleFormButtons(false);
+    }
+
+    function deleteEntry(i) {
+      if (!confirm('本当に削除しますか？')) return;
+      entries.splice(i, 1);
+      saveAndRender();
+      document.getElementById('daySummary').style.display = 'none';
+    }
+
+    function cancelEdit() {
+      clearForm();
+      toggleFormButtons(false);
+    }
+
+    function saveAndRender() {
+      // 日付順ソート
+      entries.sort((a, b) => new Date(a.date) - new Date(b.date));
+      localStorage.setItem('mp2Data', JSON.stringify(entries));
+      renderTable();
+      renderChart();
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('dataBody');
+      tbody.innerHTML = '';
+      entries.forEach((e, i) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${e.date}</td>
+          <td>${e.stage}</td>
+          <td>${e.summary}</td>
+          <td>
+            <button class="action-btn edit" onclick="editEntry(${i})">編集</button>
+            <button class="action-btn" onclick="deleteEntry(${i})">削除</button>
+          </td>`;
+        tr.onclick = () => showSummary(i);
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderChart() {
+      chart.data.labels = entries.map(e => e.date);
+      chart.data.datasets[0].data = entries.map(e => e.stage);
+      chart.update();
+    }
+
+    function showSummary(i) {
+      const content = document.getElementById('summaryContent');
+      content.textContent = entries[i].summary;
+      document.getElementById('daySummary').style.display = 'block';
+    }
+
+    function clearForm() {
+      document.getElementById('date').value = '';
+      document.getElementById('stage').value = '';
+      document.getElementById('summaryText').value = '';
+    }
+
+    function toggleFormButtons(editing) {
+      document.getElementById('addBtn').style.display = editing ? 'none' : 'inline-block';
+      document.getElementById('updateBtn').style.display = editing ? 'inline-block' : 'none';
+      document.getElementById('cancelBtn').style.display = editing ? 'inline-block' : 'none';
+    }
+  </script>
+</body>
+</html>
