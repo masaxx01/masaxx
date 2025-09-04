@@ -1,35 +1,33 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>マリオパーティー2 コースター人生ログ</title>
-  <!-- Chart.js CDN -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>マリオパーティー２ ミニゲームコースター人生 戦績管理</title>
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    /* ページ全体のスタイル */
     body {
       font-family: sans-serif;
       background-color: #ffffff;
-      color: #333333;
+      color: #333;
       margin: 0;
       padding: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
     }
     h1 {
       text-align: center;
       margin-bottom: 30px;
     }
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-    }
-    /* 入力フォーム */
     .entry-form {
-      border: 1px solid #e0e0e0;
-      padding: 20px;
-      margin-bottom: 40px;
       background: #fafafa;
-      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      padding: 16px;
+      margin-bottom: 40px;
     }
     .entry-form label {
       display: block;
@@ -37,141 +35,113 @@
       font-weight: bold;
     }
     .entry-form input[type="date"],
-    .entry-form input[type="number"],
-    .entry-form textarea {
+    .entry-form input[type="text"] {
       width: 100%;
       padding: 8px;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
       border: 1px solid #ccc;
       border-radius: 4px;
     }
     .entry-form button {
-      padding: 10px 16px;
-      margin-right: 8px;
+      background-color: #1976d2;
+      color: #fff;
       border: none;
       border-radius: 4px;
-      background-color: #1976d2;
-      color: white;
+      padding: 10px 16px;
       cursor: pointer;
     }
     .entry-form button:hover {
       background-color: #1565c0;
     }
-    /* 表とグラフ */
     #chart-container {
       margin-bottom: 40px;
     }
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 40px;
     }
     th, td {
       border: 1px solid #ddd;
-      padding: 12px;
+      padding: 10px;
       text-align: center;
     }
     th {
       background-color: #f5f5f5;
     }
-    .action-btn {
+    .delete-btn {
       background: #e53935;
-      color: white;
+      color: #fff;
       border: none;
       padding: 6px 10px;
       border-radius: 4px;
       cursor: pointer;
     }
-    .action-btn.edit {
-      background: #fdd835;
-      margin-right: 4px;
-    }
-    .action-btn:hover {
+    .delete-btn:hover {
       opacity: 0.9;
-    }
-    /* 総括セクション */
-    .summary {
-      border: 1px solid #e0e0e0;
-      padding: 20px;
-      background: #fafafa;
-      border-radius: 8px;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>マリオパーティー2 コースター人生ログ</h1>
+    <h1>マリオパーティー２ 戦績管理</h1>
 
     <!-- エントリーフォーム -->
     <div class="entry-form">
-      <label for="date">日付</label>
-      <input type="date" id="date" />
+      <label for="playDate">プレイ日付</label>
+      <input type="date" id="playDate">
 
-      <label for="stage">最終到達ステージ</label>
-      <input type="number" id="stage" min="1" />
-
-      <label for="summaryText">1日の総括</label>
-      <textarea id="summaryText" rows="4" placeholder="その日の出来事や感想を入力"></textarea>
+      <label for="stageName">クリアしたステージ名</label>
+      <input type="text" id="stageName" placeholder="例：チョコキングダム">
 
       <button id="addBtn">追加</button>
-      <button id="updateBtn" style="display:none;">更新</button>
-      <button id="cancelBtn" style="display:none;">キャンセル</button>
     </div>
 
-    <!-- グラフ -->
+    <!-- グラフ描画エリア -->
     <div id="chart-container">
-      <canvas id="stageChart"></canvas>
+      <canvas id="clearChart"></canvas>
     </div>
 
-    <!-- データテーブル -->
+    <!-- テーブル表示エリア -->
     <table>
       <thead>
         <tr>
           <th>日付</th>
-          <th>ステージ</th>
-          <th>総括</th>
+          <th>ステージ名</th>
           <th>操作</th>
         </tr>
       </thead>
-      <tbody id="dataBody">
+      <tbody id="recordBody">
         <!-- JSで動的に挿入 -->
       </tbody>
     </table>
-
-    <!-- 選択中エントリーの総括表示 -->
-    <div class="summary" id="daySummary">
-      <h2>選択中の日付の総括</h2>
-      <p id="summaryContent">エントリーを選択してください。</p>
-    </div>
   </div>
 
   <script>
-    // データ保存用
-    let entries = JSON.parse(localStorage.getItem('mp2Data') || '[]');
-    let editIndex = null;
+    // データ配列の読み込み/初期化
+    let records = JSON.parse(localStorage.getItem('mp2Records') || '[]');
 
-    // Chart.js初期化
-    const ctx = document.getElementById('stageChart').getContext('2d');
-    const chart = new Chart(ctx, {
-      type: 'line',
+    // Chart.js 初期化
+    const ctx = document.getElementById('clearChart').getContext('2d');
+    const clearChart = new Chart(ctx, {
+      type: 'bar',
       data: { labels: [], datasets: [{
-        label: 'ステージ到達数',
+        label: '1日あたりクリア数',
         data: [],
+        backgroundColor: 'rgba(25,118,210,0.5)',
         borderColor: '#1976d2',
-        backgroundColor: 'rgba(25,118,210,0.2)',
-        fill: true,
-        tension: 0.3
+        borderWidth: 1
       }]},
       options: {
         scales: {
-          x: { 
+          x: {
             type: 'time',
             time: { unit: 'day', tooltipFormat: 'YYYY-MM-DD' },
             title: { display: true, text: '日付' }
           },
           y: {
             beginAtZero: true,
-            title: { display: true, text: 'ステージ' }
+            title: { display: true, text: 'クリアステージ数' },
+            ticks: { precision: 0 }
           }
         }
       }
@@ -181,100 +151,66 @@
     renderAll();
 
     // イベント登録
-    document.getElementById('addBtn').onclick = addEntry;
-    document.getElementById('updateBtn').onclick = updateEntry;
-    document.getElementById('cancelBtn').onclick = cancelEdit;
-
-    function addEntry() {
-      const d = document.getElementById('date').value;
-      const s = parseInt(document.getElementById('stage').value);
-      const sm = document.getElementById('summaryText').value.trim();
-      if (!d || !s || !sm) return alert('全て入力してください');
-      entries.push({ date: d, stage: s, summary: sm });
+    document.getElementById('addBtn').onclick = () => {
+      const date = document.getElementById('playDate').value;
+      const name = document.getElementById('stageName').value.trim();
+      if (!date || !name) {
+        alert('日付とステージ名を入力してください。');
+        return;
+      }
+      records.push({ date, name });
       saveAndRender();
       clearForm();
-    }
+    };
 
-    function editEntry(i) {
-      editIndex = i;
-      const e = entries[i];
-      document.getElementById('date').value = e.date;
-      document.getElementById('stage').value = e.stage;
-      document.getElementById('summaryText').value = e.summary;
-      toggleFormButtons(true);
-    }
-
-    function updateEntry() {
-      const d = document.getElementById('date').value;
-      const s = parseInt(document.getElementById('stage').value);
-      const sm = document.getElementById('summaryText').value.trim();
-      if (!d || !s || !sm) return alert('全て入力してください');
-      entries[editIndex] = { date: d, stage: s, summary: sm };
-      saveAndRender();
-      clearForm();
-      toggleFormButtons(false);
-    }
-
-    function deleteEntry(i) {
-      if (!confirm('本当に削除しますか？')) return;
-      entries.splice(i, 1);
-      saveAndRender();
-      document.getElementById('daySummary').style.display = 'none';
-    }
-
-    function cancelEdit() {
-      clearForm();
-      toggleFormButtons(false);
-    }
-
+    // データ保存＆再描画
     function saveAndRender() {
-      // 日付順ソート
-      entries.sort((a, b) => new Date(a.date) - new Date(b.date));
-      localStorage.setItem('mp2Data', JSON.stringify(entries));
+      localStorage.setItem('mp2Records', JSON.stringify(records));
       renderTable();
       renderChart();
     }
 
+    // テーブル描画
     function renderTable() {
-      const tbody = document.getElementById('dataBody');
+      const tbody = document.getElementById('recordBody');
       tbody.innerHTML = '';
-      entries.forEach((e, i) => {
+      // 日付順にソート
+      records.sort((a, b) => new Date(a.date) - new Date(b.date));
+      records.forEach((rec, i) => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td>${e.date}</td>
-          <td>${e.stage}</td>
-          <td>${e.summary}</td>
+          <td>${rec.date}</td>
+          <td>${rec.name}</td>
           <td>
-            <button class="action-btn edit" onclick="editEntry(${i})">編集</button>
-            <button class="action-btn" onclick="deleteEntry(${i})">削除</button>
+            <button class="delete-btn" onclick="deleteRecord(${i})">削除</button>
           </td>`;
-        tr.onclick = () => showSummary(i);
         tbody.appendChild(tr);
       });
     }
 
+    // グラフ描画（同一日付の件数をカウント）
     function renderChart() {
-      chart.data.labels = entries.map(e => e.date);
-      chart.data.datasets[0].data = entries.map(e => e.stage);
-      chart.update();
+      const counts = records.reduce((acc, rec) => {
+        acc[rec.date] = (acc[rec.date] || 0) + 1;
+        return acc;
+      }, {});
+      const dates = Object.keys(counts).sort((a, b) => new Date(a) - new Date(b));
+      clearChart.data.labels = dates;
+      clearChart.data.datasets[0].data = dates.map(d => counts[d]);
+      clearChart.update();
     }
 
-    function showSummary(i) {
-      const content = document.getElementById('summaryContent');
-      content.textContent = entries[i].summary;
-      document.getElementById('daySummary').style.display = 'block';
+    // レコード削除
+    function deleteRecord(index) {
+      if (!confirm('この記録を削除しますか？')) return;
+      records.splice(index, 1);
+      saveAndRender();
     }
 
+    // フォームクリア
     function clearForm() {
-      document.getElementById('date').value = '';
-      document.getElementById('stage').value = '';
-      document.getElementById('summaryText').value = '';
-    }
-
-    function toggleFormButtons(editing) {
-      document.getElementById('addBtn').style.display = editing ? 'none' : 'inline-block';
-      document.getElementById('updateBtn').style.display = editing ? 'inline-block' : 'none';
-      document.getElementById('cancelBtn').style.display = editing ? 'inline-block' : 'none';
+      document.getElementById('playDate').value = '';
+      document.getElementById('stageName').value = '';
     }
   </script>
 </body>
