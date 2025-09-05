@@ -1,14 +1,5 @@
 {
   "records": [
-    {
-      "date": "2025-09-04",
-      "weekday": "木",
-      "startTime": "00:00",
-      "clearStages": 0,
-      "remark1": "【1-1】のっかれボール",
-      "remark2": "マリオパーティ２",
-      "remark3": ""
-    },
       {
       "date": "2025-09-03",
       "weekday": "金",
@@ -16,6 +7,15 @@
       "clearStages": 0,
       "remark1": "【1-1】のっかれボール",
       "remark2": "シノビリフレ SENRAN KAGURA",
+      "remark3": ""
+    },
+     {
+      "date": "2025-09-04",
+      "weekday": "木",
+      "startTime": "00:00",
+      "clearStages": 0,
+      "remark1": "【1-1】のっかれボール",
+      "remark2": "マリオパーティ２",
       "remark3": ""
     },
       {
