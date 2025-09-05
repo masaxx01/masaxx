@@ -21,8 +21,14 @@
 
     <!-- 成績の良いもの -->
     <section id="top-performers" class="card">
-      <h2>BEST5</h2>
+      <h2>BEST 5</h2>
       <table id="top-table"></table>
+    </section>
+
+    <!-- 成績の悪いもの -->
+    <section id="bottom-performers" class="card">
+      <h2>WORST 5</h2>
+      <table id="bottom-table"></table>
     </section>
 
     <!-- 実績推移グラフ -->
@@ -60,6 +66,7 @@
           const records = data.records;
           renderLatest(records);
           renderTop(records);
+          renderBottom(records);
           renderChart(records);
           renderWeekdayAverage(records);
           renderHourlyAverage(records);
@@ -140,6 +147,31 @@
           <td>${r.remark2 || ''}</td>
           <td>${r.remark3 || ''}</td>
         `;
+        tbody.appendChild(tr);
+      });
+      table.appendChild(tbody);
+    }
+
+    // 成績の悪いもの 下位5件
+    function renderBottom(records) {
+      const sorted = [...records]
+        .sort((a, b) => a.clearStages - b.clearStages)
+        .slice(0, 5);
+      const table = document.getElementById('bottom-table');
+      table.innerHTML = `
+        <thead>
+          <tr>
+            <th>日付</th><th>曜日</th><th>開始時刻</th>
+            <th>クリアステージ数</th><th>備考1</th><th>備考2</th><th>備考3</th>
+          </tr>
+        </thead>`;
+      const tbody = document.createElement('tbody');
+      sorted.forEach(r => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${r.date}</td><td>${r.weekday}</td>
+          <td>${r.startTime}</td><td>${r.clearStages}</td>
+          <td>${r.remark1||''}</td><td>${r.remark2||''}</td><td>${r.remark3||''}</td>`;
         tbody.appendChild(tr);
       });
       table.appendChild(tbody);
