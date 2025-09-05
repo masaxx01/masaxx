@@ -120,8 +120,8 @@ details[open] > summary::before {
       "latest-records  graph-section"
       "top-performers  graph-section"
       "summary         graph-section"
-      "averages        graph-section"
-      "all-records     all-records";
+      ".               averages"
+      "all-records      all-records";
     gap: 1.5rem;
   }
 
