@@ -9,268 +9,284 @@
 </head>
 <body>
   <header>
-    <h1>実績ダッシュボード</h1>
+    <h1>バトラデータベース　BDB</h1>
   </header>
 
-  <!-- タブボタン -->
-  <nav class="tab-buttons">
-    <button id="btn-dashboard" class="active">ダッシュボード</button>
-    <button id="btn-all-records">全ての記録</button>
-  </nav>
-
-  <main class="tab-content">
-    <!-- ダッシュボードタブ -->
-    <section id="dashboard-tab" class="active">
-      <section id="latest-records" class="card">
-        <h2>直近の記録</h2>
-        <table id="latest-table"></table>
-      </section>
-
-      <section id="top-performers" class="card">
-        <h2>成績の良いもの</h2>
-        <table id="top-table"></table>
-      </section>
-
-      <section id="graph-section" class="card">
-        <h2>実績推移グラフ</h2>
-        <canvas id="performance-chart"></canvas>
-      </section>
-
-      <section id="weekday-average" class="card">
-        <h2>曜日別平均クリアステージ数</h2>
-        <table id="weekday-table"></table>
-        <canvas id="weekday-chart"></canvas>
-      </section>
-
-      <section id="hourly-average" class="card">
-        <h2>時間帯別平均クリアステージ数</h2>
-        <table id="hourly-table"></table>
-        <canvas id="hourly-chart"></canvas>
-      </section>
+  <main>
+    <!-- 直近の記録 -->
+    <section id="latest-records" class="card">
+      <h2>直近の人生プレイ</h2>
+      <table id="latest-table"></table>
     </section>
 
-    <!-- 全記録タブ -->
-    <section id="all-records-tab">
-      <div class="card">
-        <h2>総プレイ回数</h2>
-        <p id="total-count" class="fade-in-text">0 件</p>
-      </div>
-      <section class="card">
-        <h2>全ての記録一覧</h2>
-        <table id="all-records-table"></table>
-      </section>
+    <!-- 成績の良いもの -->
+    <section id="top-performers" class="card">
+      <h2>BEST5</h2>
+      <table id="top-table"></table>
+    </section>
+
+    <!-- グラフ -->
+    <section id="graph-section" class="card">
+      <h2>クリアステージ数推移グラフ</h2>
+      <canvas id="performance-chart"></canvas>
+    </section>
+
+     <!-- 新規：曜日別平均クリアステージ数 -->
+    <section id="weekday-average" class="card">
+      <h2>曜日別平均クリアステージ数</h2>
+      <table id="weekday-table"></table>
+      <canvas id="weekday-chart" style="margin-top:1rem;"></canvas>
+    </section>
+
+    <!-- 新規：時間帯別平均クリアステージ数 -->
+    <section id="hourly-average" class="card">
+      <h2>時間帯別平均クリアステージ数</h2>
+      <table id="hourly-table"></table>
+      <canvas id="hourly-chart" style="margin-top:1rem;"></canvas>
     </section>
   </main>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const btnDash = document.getElementById('btn-dashboard');
-      const btnAll   = document.getElementById('btn-all-records');
-      const dashTab  = document.getElementById('dashboard-tab');
-      const allTab   = document.getElementById('all-records-tab');
-
-      // タブ切り替えイベント
-      btnDash.addEventListener('click', () => {
-        btnDash.classList.add('active');
-        btnAll.classList.remove('active');
-        dashTab.classList.add('active');
-        allTab.classList.remove('active');
-      });
-      btnAll.addEventListener('click', () => {
-        btnAll.classList.add('active');
-        btnDash.classList.remove('active');
-        allTab.classList.add('active');
-        dashTab.classList.remove('active');
-      });
-
-      // データ読み込み
       fetch('data.json')
         .then(res => res.json())
         .then(data => {
-          const records = data.records;
-          renderLatest(records);
-          renderTop(records);
-          renderChart(records);
-          renderWeekdayAverage(records);
-          renderHourlyAverage(records);
-          renderAllRecords(records);
+          renderLatest(data.records);
+          renderTop(data.records);
+          renderChart(data.records);
+          renderWeekdayAverage(data.records);
+          renderHourlyAverage(data.records);
         })
         .catch(err => console.error(err));
     });
 
-    // ---- 既存の描画関数 ----
-
+    // 直近5件を日付降順で表示
     function renderLatest(records) {
       const sorted = [...records]
-        .sort((a,b) => new Date(b.date) - new Date(a.date))
-        .slice(0,5);
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .slice(0, 5);
+
       const table = document.getElementById('latest-table');
       table.innerHTML = `
         <thead>
           <tr>
-            <th>日付</th><th>曜日</th><th>開始時刻</th>
-            <th>クリアステージ数</th><th>備考1</th>
-            <th>備考2</th><th>備考3</th>
+            <th>日付</th>
+            <th>曜日</th>
+            <th>開始時刻</th>
+            <th>クリアステージ数</th>
+            <th>最終到達ステージ</th>
+            <th>直前プレイタイトル</th>
+            <th>備考</th>
           </tr>
         </thead>`;
+
       const tbody = document.createElement('tbody');
       sorted.forEach(r => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td>${r.date}</td><td>${r.weekday}</td>
-          <td>${r.startTime}</td><td>${r.clearStages}</td>
-          <td>${r.remark1||''}</td><td>${r.remark2||''}</td>
-          <td>${r.remark3||''}</td>`;
+          <td>${r.date}</td>
+          <td>${r.weekday}</td>
+          <td>${r.startTime}</td>
+          <td>${r.clearStages}</td>
+          <td>${r.remark1 || ''}</td>
+          <td>${r.remark2 || ''}</td>
+          <td>${r.remark3 || ''}</td>
+        `;
         tbody.appendChild(tr);
       });
       table.appendChild(tbody);
     }
 
+    // クリアステージ数上位5件を表示
     function renderTop(records) {
       const sorted = [...records]
-        .sort((a,b) => b.clearStages - a.clearStages)
-        .slice(0,5);
+        .sort((a, b) => b.clearStages - a.clearStages)
+        .slice(0, 5);
+
       const table = document.getElementById('top-table');
       table.innerHTML = `
         <thead>
           <tr>
-            <th>日付</th><th>曜日</th><th>開始時刻</th>
-            <th>クリアステージ数</th><th>備考1</th>
-            <th>備考2</th><th>備考3</th>
+            <th>日付</th>
+            <th>曜日</th>
+            <th>開始時刻</th>
+            <th>クリアステージ数</th>
+            <th>最終到達ステージ</th>
+            <th>直前プレイタイトル</th>
+            <th>備考</th>
           </tr>
         </thead>`;
+
       const tbody = document.createElement('tbody');
       sorted.forEach(r => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td>${r.date}</td><td>${r.weekday}</td>
-          <td>${r.startTime}</td><td>${r.clearStages}</td>
-          <td>${r.remark1||''}</td><td>${r.remark2||''}</td>
-          <td>${r.remark3||''}</td>`;
+          <td>${r.date}</td>
+          <td>${r.weekday}</td>
+          <td>${r.startTime}</td>
+          <td>${r.clearStages}</td>
+          <td>${r.remark1 || ''}</td>
+          <td>${r.remark2 || ''}</td>
+          <td>${r.remark3 || ''}</td>
+        `;
         tbody.appendChild(tr);
       });
       table.appendChild(tbody);
     }
 
+    // Chart.js で折れ線グラフを描画
     function renderChart(records) {
       const labels = records.map(r => r.date);
       const dataPoints = records.map(r => r.clearStages);
       const ctx = document.getElementById('performance-chart').getContext('2d');
       new Chart(ctx, {
-        type:'line',
-        data:{ labels, datasets:[{
-          label:'クリアステージ数推移',
-          data:dataPoints,
-          borderColor:'#111',
-          backgroundColor:'rgba(0,0,0,0.1)',
-          tension:0.3
-        }]},
-        options:{ animation:{ duration:1200 } }
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'クリアステージ数の推移',
+            data: dataPoints,
+            borderColor: '#111',
+            backgroundColor: 'rgba(0,0,0,0.1)',
+            tension: 0.3
+          }]
+        },
+        options: {
+          animation: { duration: 1200 },
+          scales: {
+            x: { title: { display: true, text: '日付' } },
+            y: { title: { display: true, text: 'クリアステージ数' } }
+          }
+        }
       });
     }
 
+    // 曜日ごとの平均クリアステージ数を算出＆描画
     function renderWeekdayAverage(records) {
-      const days=['月','火','水','木','金','土','日'];
-      const agg = days.reduce((o,d)=>{ o[d]={sum:0,count:0};return o; },{});
-      records.forEach(r=>{
-        if(agg[r.weekday]){
+      // 日本語曜日の順序配列
+      const days = ['月', '火', '水', '木', '金', '土', '日'];
+      // 集計用オブジェクト初期化
+      const agg = days.reduce((o, d) => {
+        o[d] = { sum: 0, count: 0 };
+        return o;
+      }, {});
+
+      // レコードを走査して合計・件数を加算
+      records.forEach(r => {
+        if (agg[r.weekday]) {
           agg[r.weekday].sum += r.clearStages;
-          agg[r.weekday].count++;
+          agg[r.weekday].count += 1;
         }
       });
-      const labels=[], avgs=[];
+
+      // 平均値配列とテーブル生成
+      const labels = [];
+      const averages = [];
       const table = document.getElementById('weekday-table');
       table.innerHTML = `
-        <thead><tr><th>曜日</th><th>平均クリアステージ数</th></tr></thead>`;
-      const tbody=document.createElement('tbody');
-      days.forEach(d=>{
-        const {sum,count}=agg[d];
-        const avg = count? (sum/count).toFixed(2) : '–';
-        labels.push(d);
-        avgs.push(count? parseFloat(avg): 0);
-        const tr=document.createElement('tr');
-        tr.innerHTML=`<td>${d}</td><td>${avg}</td>`;
-        tbody.appendChild(tr);
-      });
-      table.appendChild(tbody);
-      const ctx=document.getElementById('weekday-chart').getContext('2d');
-      new Chart(ctx,{
-        type:'bar',
-        data:{ labels, datasets:[{
-          label:'曜日別平均',
-          data:avgs,
-          backgroundColor:'rgba(0,0,0,0.2)',
-          borderColor:'#111', borderWidth:1
-        }]},
-        options:{ scales:{ y:{ beginAtZero:true } } }
-      });
-    }
-
-    function renderHourlyAverage(records) {
-      const hours=Array.from({length:24},(_,i)=>i);
-      const agg=hours.reduce((o,h)=>{ o[h]={sum:0,count:0};return o; },{});
-      records.forEach(r=>{
-        const h=parseInt(r.startTime.split(':')[0],10);
-        if(!isNaN(h) && agg[h]){
-          agg[h].sum += r.clearStages;
-          agg[h].count++;
-        }
-      });
-      const labels=[], avgs=[];
-      const table=document.getElementById('hourly-table');
-      table.innerHTML = `
-        <thead><tr><th>時間帯</th><th>平均クリアステージ数</th></tr></thead>`;
-      const tbody=document.createElement('tbody');
-      hours.forEach(h=>{
-        const {sum,count}=agg[h];
-        const avg = count? (sum/count).toFixed(2) : '–';
-        labels.push(`${('0'+h).slice(-2)}:00`);
-        avgs.push(count? parseFloat(avg): 0);
-        const tr=document.createElement('tr');
-        tr.innerHTML=`<td>${('0'+h).slice(-2)}:00</td><td>${avg}</td>`;
-        tbody.appendChild(tr);
-      });
-      table.appendChild(tbody);
-      const ctx=document.getElementById('hourly-chart').getContext('2d');
-      new Chart(ctx,{
-        type:'bar',
-        data:{ labels, datasets:[{
-          label:'時間帯別平均',
-          data:avgs,
-          backgroundColor:'rgba(0,0,0,0.2)',
-          borderColor:'#111', borderWidth:1
-        }]},
-        options:{ scales:{ y:{ beginAtZero:true } } }
-      });
-    }
-
-    // 全記録一覧と総プレイ回数
-    function renderAllRecords(records) {
-      // 総件数
-      const totalEl = document.getElementById('total-count');
-      totalEl.textContent = `${records.length} 件`;
-
-      // 全レコードテーブル
-      const table = document.getElementById('all-records-table');
-      table.innerHTML = `
         <thead>
-          <tr>
-            <th>日付</th><th>曜日</th><th>開始時刻</th>
-            <th>クリアステージ数</th><th>備考1</th>
-            <th>備考2</th><th>備考3</th>
-          </tr>
+          <tr><th>曜日</th><th>平均クリアステージ数</th></tr>
         </thead>`;
       const tbody = document.createElement('tbody');
-      records.forEach(r => {
+
+      days.forEach(day => {
+        const { sum, count } = agg[day];
+        const avg = count ? (sum / count).toFixed(2) : '–';
+        labels.push(day);
+        averages.push(count ? parseFloat(avg) : 0);
         const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${r.date}</td><td>${r.weekday}</td>
-          <td>${r.startTime}</td><td>${r.clearStages}</td>
-          <td>${r.remark1||''}</td><td>${r.remark2||''}</td>
-          <td>${r.remark3||''}</td>`;
+        tr.innerHTML = `<td>${day}</td><td>${avg}</td>`;
         tbody.appendChild(tr);
       });
       table.appendChild(tbody);
+
+      // 棒グラフ描画
+      const ctx = document.getElementById('weekday-chart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: '平均クリアステージ数',
+            data: averages,
+            backgroundColor: 'rgba(0,0,0,0.2)',
+            borderColor: '#111',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          animation: { duration: 1000 },
+          scales: {
+            x: { title: { display: true, text: '曜日' } },
+            y: { title: { display: true, text: '平均クリアステージ数' }, beginAtZero: true }
+          }
+        }
+      });
+    }
+
+     // 時間帯別平均クリアステージ数を算出＆描画
+    function renderHourlyAverage(records) {
+      // 0時～23時をラベル化
+      const hours = Array.from({ length: 24 }, (_, i) => i);
+      // 集計オブジェクト初期化
+      const agg = hours.reduce((o, h) => {
+        o[h] = { sum: 0, count: 0 };
+        return o;
+      }, {});
+
+      // レコードを走査
+      records.forEach(r => {
+        // "HH:MM" 形式として、先頭の時間を数値化
+        const hour = parseInt(r.startTime.split(':')[0], 10);
+        if (!isNaN(hour) && agg[hour]) {
+          agg[hour].sum += r.clearStages;
+          agg[hour].count += 1;
+        }
+      });
+
+      // テーブルと配列作成
+      const labels = [];
+      const averages = [];
+      const table = document.getElementById('hourly-table');
+      table.innerHTML = `
+        <thead>
+          <tr><th>時間帯</th><th>平均クリアステージ数</th></tr>
+        </thead>`;
+      const tbody = document.createElement('tbody');
+
+      hours.forEach(h => {
+        const { sum, count } = agg[h];
+        const avg = count ? (sum / count).toFixed(2) : '–';
+        labels.push(`${('0'+h).slice(-2)}:00`);
+        averages.push(count ? parseFloat(avg) : 0);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${('0'+h).slice(-2)}:00</td><td>${avg}</td>`;
+        tbody.appendChild(tr);
+      });
+      table.appendChild(tbody);
+
+      // 棒グラフ描画
+      const ctx = document.getElementById('hourly-chart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: '平均クリアステージ数',
+            data: averages,
+            backgroundColor: 'rgba(0,0,0,0.2)',
+            borderColor: '#111',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          animation: { duration: 1000 },
+          scales: {
+            x: { title: { display: true, text: '時間帯' } },
+            y: { title: { display: true, text: '平均クリアステージ数' }, beginAtZero: true }
+          }
+        }
+      });
     }
   </script>
 </body>
