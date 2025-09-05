@@ -1,10 +1,23 @@
 {
   "records": [
-    { "date": "2025-09-05", "item": "テストA", "value": 78 },
-    { "date": "2025-09-04", "item": "テストB", "value": 92 },
-    { "date": "2025-09-03", "item": "テストC", "value": 85 },
-    { "date": "2025-09-02", "item": "テストD", "value": 60 },
-    { "date": "2025-09-01", "item": "テストE", "value": 95 },
-    { "date": "2025-08-30", "item": "テストF", "value": 88 }
+    {
+      "date": "2025-09-05",
+      "weekday": "金",
+      "startTime": "14:30",
+      "clearStages": 12,
+      "remark1": "最高記録",
+      "remark2": "新モード",
+      "remark3": ""
+    },
+    {
+      "date": "2025-09-04",
+      "weekday": "木",
+      "startTime": "09:15",
+      "clearStages": 8,
+      "remark1": "",
+      "remark2": "",
+      "remark3": ""
+    }
+    // ...他のレコード
   ]
 }
