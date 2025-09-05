@@ -118,9 +118,8 @@ details[open] > summary::before {
     grid-template-columns: 1fr 2fr;
     grid-template-areas:
       "latest-records  graph-section"
-      "top-performers  graph-section"
-      "summary         averages"
-      "all-records      all-records";
+      "top-performers  averages"
+      "summary         all-records";
     gap: 1.5rem;
   }
 
