@@ -308,20 +308,19 @@
     }
 
     // 総プレイ回数を表示
-    function renderSummary(records) {
-      const totalEl = document.getElementById('total-count');
-      totalEl.textContent = `${records.length} 件`;
+   function renderSummary(records) {
+      document.getElementById('total-count').textContent = `${records.length} 件`;
     }
 
     // 全ての記録一覧を表示
-    function renderAllRecords(records) {
+     function renderAllRecords(records) {
       const table = document.getElementById('all-records-table');
       table.innerHTML = `
         <thead>
           <tr>
             <th>日付</th><th>曜日</th><th>開始時刻</th>
             <th>クリアステージ数</th><th>最終到達ステージ</th>
-            <th>直前プレイタイトル</th><th>備考</th>
+            <th>直前プレイタイトル</th><th>備考3</th>
           </tr>
         </thead>`;
       const tbody = document.createElement('tbody');
@@ -330,7 +329,8 @@
         tr.innerHTML = `
           <td>${r.date}</td><td>${r.weekday}</td>
           <td>${r.startTime}</td><td>${r.clearStages}</td>
-          <td>${r.remark1 || ''}</td><td>${r.remark2 || ''}</td>
+          <td>${r.remark1 || ''}</td>
+          <td>${r.remark2 || ''}</td>
           <td>${r.remark3 || ''}</td>`;
         tbody.appendChild(tr);
       });
