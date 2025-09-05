@@ -30,7 +30,7 @@ main {
   border: 1px solid #ccc;
   border-radius: 6px;
   padding: 1.5rem;
-  animation: fadeIn 0.8s ease-in-out;
+  animation: fadeIn 1.0s ease-in-out;
 }
 h2 {
   font-size: 1.3rem;
@@ -45,7 +45,7 @@ table {
   border-collapse: collapse;
   opacity: 0;
   animation: fadeIn 1s forwards;
-  animation-delay: 0.5s;
+  animation-delay: 0.8s;
 }
 th, td {
   border: 1px solid #ccc;
@@ -62,7 +62,7 @@ tbody tr:hover {
   font-size: 1.2rem;
   opacity: 0;
   animation: fadeIn 1s forwards;
-  animation-delay: 0.3s;
+  animation-delay: 0.5s;
 }
 
 /* アニメーション */
