@@ -101,7 +101,7 @@ tbody tr:hover {
     grid-template-columns: 1fr 2fr;
     grid-template-areas:
       "latest-records  graph-section"
-      "top-performers  weekday-averages"
+      "top-performers  weekday-average"
       "all-records     hourly-average";
     gap: 1.5rem;
   }
