@@ -63,7 +63,6 @@
           renderChart(records);
           renderWeekdayAverage(records);
           renderHourlyAverage(records);
-          renderSummary(records);
           renderAllRecords(records);
         })
         .catch(err => console.error(err));
@@ -299,9 +298,7 @@
           }
         }
       });
-    }
-
-
+      
     // 全ての記録一覧を表示
      function renderAllRecords(records) {
       const table = document.getElementById('all-records-table');
