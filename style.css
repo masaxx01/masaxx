@@ -127,6 +127,7 @@ details[open] > summary::before {
   main {
     display: grid;
     grid-template-columns: auto auto;
+    grid-template-rows: auto auto;
     grid-template-areas:
       "latest-records  graph-section"
       "top-performers  averages"
