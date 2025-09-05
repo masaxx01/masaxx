@@ -25,24 +25,36 @@
       <table id="top-table"></table>
     </section>
 
-    <!-- グラフ -->
+    <!-- 実績推移グラフ -->
     <section id="graph-section" class="card">
-      <h2>クリアステージ数推移グラフ</h2>
+      <h2>戦績推移グラフ</h2>
       <canvas id="performance-chart"></canvas>
     </section>
 
-     <!-- 新規：曜日別平均クリアステージ数 -->
+    <!-- 曜日別平均クリアステージ数 -->
     <section id="weekday-average" class="card">
       <h2>曜日別平均クリアステージ数</h2>
       <table id="weekday-table"></table>
-      <canvas id="weekday-chart" style="margin-top:1rem;"></canvas>
+      <canvas id="weekday-chart"></canvas>
     </section>
 
-    <!-- 新規：時間帯別平均クリアステージ数 -->
+    <!-- 時間帯別平均クリアステージ数 -->
     <section id="hourly-average" class="card">
       <h2>時間帯別平均クリアステージ数</h2>
       <table id="hourly-table"></table>
-      <canvas id="hourly-chart" style="margin-top:1rem;"></canvas>
+      <canvas id="hourly-chart"></canvas>
+    </section>
+
+    <!-- 総プレイ回数 -->
+    <section id="summary" class="card">
+      <h2>総プレイ回数</h2>
+      <p id="total-count" class="fade-in-text">0 件</p>
+    </section>
+
+    <!-- 全ての記録一覧 -->
+    <section id="all-records" class="card">
+      <h2>全てのプレイ一覧</h2>
+      <table id="all-records-table"></table>
     </section>
   </main>
 
@@ -51,14 +63,20 @@
       fetch('data.json')
         .then(res => res.json())
         .then(data => {
-          renderLatest(data.records);
-          renderTop(data.records);
-          renderChart(data.records);
-          renderWeekdayAverage(data.records);
-          renderHourlyAverage(data.records);
+          const records = data.records;
+          renderLatest(records);
+          renderTop(records);
+          renderChart(records);
+          renderWeekdayAverage(records);
+          renderHourlyAverage(records);
+          renderSummary(records);
+          renderAllRecords(records);
         })
         .catch(err => console.error(err));
     });
+
+    // 省略: renderLatest / renderTop / renderChart / renderWeekdayAverage / renderHourlyAverage
+    // （前出のコードをそのままお使いください）
 
     // 直近5件を日付降順で表示
     function renderLatest(records) {
@@ -74,9 +92,9 @@
             <th>曜日</th>
             <th>開始時刻</th>
             <th>クリアステージ数</th>
-            <th>最終到達ステージ</th>
-            <th>直前プレイタイトル</th>
-            <th>備考</th>
+            <th>備考1</th>
+            <th>備考2</th>
+            <th>備考3</th>
           </tr>
         </thead>`;
 
@@ -111,9 +129,9 @@
             <th>曜日</th>
             <th>開始時刻</th>
             <th>クリアステージ数</th>
-            <th>最終到達ステージ</th>
-            <th>直前プレイタイトル</th>
-            <th>備考</th>
+            <th>備考1</th>
+            <th>備考2</th>
+            <th>備考3</th>
           </tr>
         </thead>`;
 
@@ -160,7 +178,7 @@
         }
       });
     }
-
+    
     // 曜日ごとの平均クリアステージ数を算出＆描画
     function renderWeekdayAverage(records) {
       // 日本語曜日の順序配列
@@ -223,8 +241,8 @@
         }
       });
     }
-
-     // 時間帯別平均クリアステージ数を算出＆描画
+    
+    // 時間帯別平均クリアステージ数を算出＆描画
     function renderHourlyAverage(records) {
       // 0時～23時をラベル化
       const hours = Array.from({ length: 24 }, (_, i) => i);
@@ -287,6 +305,36 @@
           }
         }
       });
+    }
+
+    // 総プレイ回数を表示
+    function renderSummary(records) {
+      const totalEl = document.getElementById('total-count');
+      totalEl.textContent = `${records.length} 件`;
+    }
+
+    // 全ての記録一覧を表示
+    function renderAllRecords(records) {
+      const table = document.getElementById('all-records-table');
+      table.innerHTML = `
+        <thead>
+          <tr>
+            <th>日付</th><th>曜日</th><th>開始時刻</th>
+            <th>クリアステージ数</th><th>備考1</th>
+            <th>備考2</th><th>備考3</th>
+          </tr>
+        </thead>`;
+      const tbody = document.createElement('tbody');
+      records.forEach(r => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${r.date}</td><td>${r.weekday}</td>
+          <td>${r.startTime}</td><td>${r.clearStages}</td>
+          <td>${r.remark1 || ''}</td><td>${r.remark2 || ''}</td>
+          <td>${r.remark3 || ''}</td>`;
+        tbody.appendChild(tr);
+      });
+      table.appendChild(tbody);
     }
   </script>
 </body>
