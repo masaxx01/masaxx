@@ -108,6 +108,7 @@ tbody tr:hover {
 
   #latest-records    { grid-area: latest-records; }
   #top-performers    { grid-area: top-performers; }
+  #bottom-performers { grid-area: bottom-performers; }
   #summary           { grid-area: summary; }
   #graph-section     { grid-area: graph-section; }
   #weekday-average   { grid-area: weekday-average; }
