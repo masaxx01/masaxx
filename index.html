@@ -205,28 +205,7 @@
         }
       });
 
-      // 平均値配列とテーブル生成
-      const labels = [];
-      const averages = [];
-      const table = document.getElementById('weekday-table');
-      table.innerHTML = `
-        <thead>
-          <tr><th>曜日</th><th>平均クリアステージ数</th></tr>
-        </thead>`;
-      const tbody = document.createElement('tbody');
-
-      days.forEach(day => {
-        const { sum, count } = agg[day];
-        const avg = count ? (sum / count).toFixed(2) : '–';
-        labels.push(day);
-        averages.push(count ? parseFloat(avg) : 0);
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${day}</td><td>${avg}</td>`;
-        tbody.appendChild(tr);
-      });
-      table.appendChild(tbody);
-
-      // 棒グラフ描画
+           // 棒グラフ描画
       const ctx = document.getElementById('weekday-chart').getContext('2d');
       new Chart(ctx, {
         type: 'bar',
@@ -270,28 +249,7 @@
         }
       });
 
-      // テーブルと配列作成
-      const labels = [];
-      const averages = [];
-      const table = document.getElementById('hourly-table');
-      table.innerHTML = `
-        <thead>
-          <tr><th>時間帯</th><th>平均クリアステージ数</th></tr>
-        </thead>`;
-      const tbody = document.createElement('tbody');
-
-      hours.forEach(h => {
-        const { sum, count } = agg[h];
-        const avg = count ? (sum / count).toFixed(2) : '–';
-        labels.push(`${('0'+h).slice(-2)}:00`);
-        averages.push(count ? parseFloat(avg) : 0);
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${('0'+h).slice(-2)}:00</td><td>${avg}</td>`;
-        tbody.appendChild(tr);
-      });
-      table.appendChild(tbody);
-
-      // 棒グラフ描画
+          // 棒グラフ描画
       const ctx = document.getElementById('hourly-chart').getContext('2d');
       new Chart(ctx, {
         type: 'bar',
