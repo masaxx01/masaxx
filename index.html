@@ -45,13 +45,6 @@
       <canvas id="hourly-chart" style="margin-top:1rem;"></canvas>
     </section>
 
-
-    <!-- 総プレイ回数 -->
-    <section id="summary" class="card">
-      <h2>総プレイ回数</h2>
-      <p id="total-count" class="fade-in-text">0 件</p>
-    </section>
-
     <!-- 全ての記録一覧 -->
     <section id="all-records" class="card">
       <h2>全てのプレイ一覧</h2>
@@ -308,10 +301,6 @@
       });
     }
 
-    // 総プレイ回数を表示
-   function renderSummary(records) {
-      document.getElementById('total-count').textContent = `${records.length} 件`;
-    }
 
     // 全ての記録一覧を表示
      function renderAllRecords(records) {
