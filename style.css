@@ -7,11 +7,11 @@
 body {
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   background-color: #fff;
-  color: #111;
+  color: #c0c0c0;
   line-height: 1.6;
 }
 header {
-  background-color: #111;
+  background-color: #c0c0c0;
   color: #fff;
   padding: 1rem;
   text-align: center;
@@ -98,7 +98,7 @@ tbody tr:hover {
 @media (min-width: 768px) {
   main {
     display: grid;
-    grid-template-columns: 2fr 3fr;
+    grid-template-columns: 1fr 1fr;
     grid-template-areas:
       "latest-records  graph-section"
       "top-performers  weekday-average"
