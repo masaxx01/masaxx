@@ -1,0 +1,87 @@
+/* ベース設定 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: #fff;
+  color: #111;
+  line-height: 1.6;
+}
+
+header {
+  background-color: #111;
+  color: #fff;
+  padding: 1rem;
+  text-align: center;
+}
+
+/* レイアウト */
+main {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+/* カードコンポーネント */
+.card {
+  background-color: #f8f8f8;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 1.5rem;
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+h2 {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 0.5rem;
+}
+
+/* テーブル */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  opacity: 0;
+  animation: fadeIn 1s ease-out forwards;
+  animation-delay: 0.5s;
+}
+
+th, td {
+  border: 1px solid #ccc;
+  padding: 0.75rem;
+  text-align: left;
+}
+
+tbody tr:hover {
+  background-color: #e0e0e0;
+  transition: background-color 0.3s;
+}
+
+/* アニメーション定義 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* レスポンシブ対応例 */
+@media (min-width: 768px) {
+  main {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  #graph-section {
+    grid-column: span 2;
+  }
+}
