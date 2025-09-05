@@ -31,19 +31,27 @@
       <canvas id="performance-chart"></canvas>
     </section>
 
-    <!-- 曜日別平均クリアステージ数 -->
-    <section id="weekday-average" class="card">
+    <!-- 既存の weekday-average と hourly-average の代わりに、下記に置き換え -->
+<section id="averages" class="card">
+  <details open>
+    <summary>平均クリアステージ数を表示／非表示</summary>
+
+    <!-- 曜日別平均 -->
+    <section id="weekday-average">
       <h2>曜日別平均クリアステージ数</h2>
       <table id="weekday-table"></table>
       <canvas id="weekday-chart"></canvas>
     </section>
 
-    <!-- 時間帯別平均クリアステージ数 -->
-    <section id="hourly-average" class="card">
+    <!-- 時間帯別平均 -->
+    <section id="hourly-average" style="margin-top:1.5rem;">
       <h2>時間帯別平均クリアステージ数</h2>
       <table id="hourly-table"></table>
       <canvas id="hourly-chart"></canvas>
     </section>
+  </details>
+</section>
+
 
     <!-- 総プレイ回数 -->
     <section id="summary" class="card">
