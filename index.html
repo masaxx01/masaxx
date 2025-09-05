@@ -336,7 +336,7 @@
           <tr>
             <th>日付</th><th>曜日</th><th>開始時刻</th>
             <th>クリアステージ数</th><th>最終到達ステージ</th>
-            <th>直前プレイタイトル</th>
+            <th>直前プレイタイトル</th><th>丁寧な挨拶</th>
           </tr>
         </thead>`;
       const tbody = document.createElement('tbody');
@@ -346,7 +346,8 @@
           <td>${r.date}</td><td>${r.weekday}</td>
           <td>${r.startTime}</td><td>${r.clearStages}</td>
           <td>${r.remark1 || ''}</td>
-          <td>${r.remark2 || ''}</td>`;
+          <td>${r.remark2 || ''}</td>
+          <td>${r.remark3 || ''}</td>`;
         tbody.appendChild(tr);
       });
       table.appendChild(tbody);
