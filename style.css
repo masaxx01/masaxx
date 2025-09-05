@@ -103,7 +103,7 @@ tbody tr:hover {
       "latest-records  graph-section"
       "top-performers  weekday-average"
       "bottom-performers  hourly-average"
-      "all-records  ." ;
+      "all-records  .";
     gap: 1.5rem;
   }
 
