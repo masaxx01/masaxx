@@ -77,34 +77,6 @@ tbody tr:hover {
   }
 }
 
-/* 折りたたみの基本スタイル */
-details {
-  border: none;
-  padding: 0;
-}
-
-summary {
-  cursor: pointer;
-  font-size: 1.3rem;
-  font-weight: bold;
-  list-style: none;       /* デフォルトマーカーを消す */
-  outline: none;
-  padding: 0.5rem 0;
-  position: relative;
-}
-
-/* 三角アイコン */
-summary::before {
-  content: "▶";
-  display: inline-block;
-  margin-right: 0.5rem;
-  transition: transform 0.2s ease;
-}
-
-details[open] > summary::before {
-  transform: rotate(90deg);
-}
-
 /* グループ内セクションの余白微調整 */
 #averages section {
   padding-top: 1rem;
