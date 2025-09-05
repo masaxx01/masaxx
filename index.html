@@ -30,6 +30,13 @@
       <h2>戦績推移グラフ</h2>
       <canvas id="performance-chart"></canvas>
     </section>
+
+     <!-- 新規：曜日別平均クリアステージ数 -->
+    <section id="weekday-average" class="card">
+      <h2>曜日別平均クリアステージ数</h2>
+      <table id="weekday-table"></table>
+      <canvas id="weekday-chart" style="margin-top:1rem;"></canvas>
+    </section>
   </main>
 
   <script>
@@ -40,6 +47,7 @@
           renderLatest(data.records);
           renderTop(data.records);
           renderChart(data.records);
+          renderWeekdayAverage(data.records);
         })
         .catch(err => console.error(err));
     });
@@ -140,6 +148,69 @@
           scales: {
             x: { title: { display: true, text: '日付' } },
             y: { title: { display: true, text: 'クリアステージ数' } }
+          }
+        }
+      });
+    }
+
+    // 曜日ごとの平均クリアステージ数を算出＆描画
+    function renderWeekdayAverage(records) {
+      // 日本語曜日の順序配列
+      const days = ['月', '火', '水', '木', '金', '土', '日'];
+      // 集計用オブジェクト初期化
+      const agg = days.reduce((o, d) => {
+        o[d] = { sum: 0, count: 0 };
+        return o;
+      }, {});
+
+      // レコードを走査して合計・件数を加算
+      records.forEach(r => {
+        if (agg[r.weekday]) {
+          agg[r.weekday].sum += r.clearStages;
+          agg[r.weekday].count += 1;
+        }
+      });
+
+      // 平均値配列とテーブル生成
+      const labels = [];
+      const averages = [];
+      const table = document.getElementById('weekday-table');
+      table.innerHTML = `
+        <thead>
+          <tr><th>曜日</th><th>平均クリアステージ数</th></tr>
+        </thead>`;
+      const tbody = document.createElement('tbody');
+
+      days.forEach(day => {
+        const { sum, count } = agg[day];
+        const avg = count ? (sum / count).toFixed(2) : '–';
+        labels.push(day);
+        averages.push(count ? parseFloat(avg) : 0);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${day}</td><td>${avg}</td>`;
+        tbody.appendChild(tr);
+      });
+      table.appendChild(tbody);
+
+      // 棒グラフ描画
+      const ctx = document.getElementById('weekday-chart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: '平均クリアステージ数',
+            data: averages,
+            backgroundColor: 'rgba(0,0,0,0.2)',
+            borderColor: '#111',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          animation: { duration: 1000 },
+          scales: {
+            x: { title: { display: true, text: '曜日' } },
+            y: { title: { display: true, text: '平均クリアステージ数' }, beginAtZero: true }
           }
         }
       });
