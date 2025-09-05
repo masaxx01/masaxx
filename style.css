@@ -80,20 +80,22 @@ tbody tr:hover {
 /* レイアウト調整：768px以上 */
 @media (min-width: 768px) {
   main {
+    display: grid;
     grid-template-columns: 1fr 2fr;
     grid-template-areas:
-      "latest-records graph-section"
-      "top-performers graph-section"
-      "summary       graph-section"
-      "weekday-average weekday-average"
-      "hourly-average hourly-average"
-      "all-records    all-records";
+      "latest-records  graph-section"
+      "top-performers  graph-section"
+      "summary         graph-section"
+      ".               weekday-average"
+      ".               hourly-average"
+      "all-records     all-records";
+    gap: 1.5rem;
   }
-  #latest-records    { grid-area: latest-records; }
-  #top-performers    { grid-area: top-performers; }
-  #summary           { grid-area: summary; }
-  #graph-section     { grid-area: graph-section; }
-  #weekday-average   { grid-area: weekday-average; }
-  #hourly-average    { grid-area: hourly-average; }
-  #all-records       { grid-area: all-records; }
-}
+
+  #latest-records   { grid-area: latest-records; }
+  #top-performers   { grid-area: top-performers; }
+  #summary          { grid-area: summary; }
+  #graph-section    { grid-area: graph-section; }
+  #weekday-average  { grid-area: weekday-average; }
+  #hourly-average   { grid-area: hourly-average; }
+  #all-records      { grid-area: all-records; }
