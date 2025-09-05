@@ -4,11 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>モノクロ実績ダッシュボード</title>
-
-  <!-- 外部CSS -->
   <link rel="stylesheet" href="style.css" />
-
-  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
@@ -48,52 +44,91 @@
         .catch(err => console.error(err));
     });
 
+    // 直近5件を日付降順で表示
     function renderLatest(records) {
       const sorted = [...records]
         .sort((a, b) => new Date(b.date) - new Date(a.date))
         .slice(0, 5);
+
       const table = document.getElementById('latest-table');
       table.innerHTML = `
         <thead>
-          <tr><th>日付</th><th>項目</th><th>値</th></tr>
+          <tr>
+            <th>日付</th>
+            <th>曜日</th>
+            <th>開始時刻</th>
+            <th>クリアステージ数</th>
+            <th>備考1</th>
+            <th>備考2</th>
+            <th>備考3</th>
+          </tr>
         </thead>`;
+
       const tbody = document.createElement('tbody');
       sorted.forEach(r => {
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${r.date}</td><td>${r.item}</td><td>${r.value}</td>`;
+        tr.innerHTML = `
+          <td>${r.date}</td>
+          <td>${r.weekday}</td>
+          <td>${r.startTime}</td>
+          <td>${r.clearStages}</td>
+          <td>${r.remark1 || ''}</td>
+          <td>${r.remark2 || ''}</td>
+          <td>${r.remark3 || ''}</td>
+        `;
         tbody.appendChild(tr);
       });
       table.appendChild(tbody);
     }
 
+    // クリアステージ数上位5件を表示
     function renderTop(records) {
       const sorted = [...records]
-        .sort((a, b) => b.value - a.value)
+        .sort((a, b) => b.clearStages - a.clearStages)
         .slice(0, 5);
+
       const table = document.getElementById('top-table');
       table.innerHTML = `
         <thead>
-          <tr><th>項目</th><th>値</th><th>日付</th></tr>
+          <tr>
+            <th>日付</th>
+            <th>曜日</th>
+            <th>開始時刻</th>
+            <th>クリアステージ数</th>
+            <th>備考1</th>
+            <th>備考2</th>
+            <th>備考3</th>
+          </tr>
         </thead>`;
+
       const tbody = document.createElement('tbody');
       sorted.forEach(r => {
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${r.item}</td><td>${r.value}</td><td>${r.date}</td>`;
+        tr.innerHTML = `
+          <td>${r.date}</td>
+          <td>${r.weekday}</td>
+          <td>${r.startTime}</td>
+          <td>${r.clearStages}</td>
+          <td>${r.remark1 || ''}</td>
+          <td>${r.remark2 || ''}</td>
+          <td>${r.remark3 || ''}</td>
+        `;
         tbody.appendChild(tr);
       });
       table.appendChild(tbody);
     }
 
+    // Chart.js で折れ線グラフを描画
     function renderChart(records) {
       const labels = records.map(r => r.date);
-      const dataPoints = records.map(r => r.value);
+      const dataPoints = records.map(r => r.clearStages);
       const ctx = document.getElementById('performance-chart').getContext('2d');
       new Chart(ctx, {
         type: 'line',
         data: {
           labels: labels,
           datasets: [{
-            label: '値の推移',
+            label: 'クリアステージ数の推移',
             data: dataPoints,
             borderColor: '#111',
             backgroundColor: 'rgba(0,0,0,0.1)',
@@ -104,7 +139,7 @@
           animation: { duration: 1200 },
           scales: {
             x: { title: { display: true, text: '日付' } },
-            y: { title: { display: true, text: '値' } }
+            y: { title: { display: true, text: 'クリアステージ数' } }
           }
         }
       });
