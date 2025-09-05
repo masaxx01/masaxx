@@ -111,6 +111,17 @@ details[open] > summary::before {
   border-top: 1px solid #ccc;
 }
 
+/* 曜日別／時間帯別平均のテーブルを非表示に */
+#weekday-average > table,
+#hourly-average > table {
+  display: none;
+}
+
+/* もし <details> で包んでいる場合は、<summary> 開閉トリガーの下だけ表示する */
+#averages details > section > table {
+  display: none !important;
+}
+
 /* レスポンシブレイアウトのグリッドエリア更新 */
 @media (min-width: 768px) {
   main {
