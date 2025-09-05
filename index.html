@@ -5,109 +5,39 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>モノクロ実績ダッシュボード</title>
 
-  <!-- Chart.js CDN -->
+  <!-- 外部CSS -->
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <style>
-    /* 全体のベース */
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-      background-color: #fff;
-      color: #111;
-    }
-
-    header {
-      background-color: #111;
-      color: #fff;
-      padding: 1rem;
-      text-align: center;
-    }
-
-    main {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 2rem;
-      padding: 2rem;
-    }
-
-    /* カード風セクション */
-    .card {
-      background-color: #f8f8f8;
-      border: 1px solid #ddd;
-      padding: 1rem;
-      border-radius: 4px;
-      animation: fadeIn 0.8s ease-in;
-    }
-
-    h2 {
-      margin-top: 0;
-      border-bottom: 1px solid #ccc;
-      padding-bottom: 0.5rem;
-      font-size: 1.25rem;
-    }
-
-    /* テーブルの基本装飾とアニメーション */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      opacity: 0;
-      animation: fadeIn 1s ease-out forwards;
-      animation-delay: 0.5s;
-    }
-
-    th, td {
-      border: 1px solid #ccc;
-      padding: 0.75rem;
-      text-align: left;
-      transition: background-color 0.3s;
-    }
-
-    tbody tr:hover {
-      background-color: #e0e0e0;
-    }
-
-    /* フェードイン＋スライドアップ */
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-  </style>
 </head>
 <body>
   <header>
-    <h1>モノクロ実績ダッシュボード</h1>
+    <h1>実績ダッシュボード</h1>
   </header>
 
   <main>
-    <!-- セクション：直近の記録 -->
+    <!-- 直近の記録 -->
     <section id="latest-records" class="card">
       <h2>直近の記録</h2>
       <table id="latest-table"></table>
     </section>
 
-    <!-- セクション：成績の良いもの -->
+    <!-- 成績の良いもの -->
     <section id="top-performers" class="card">
       <h2>成績の良いもの</h2>
       <table id="top-table"></table>
     </section>
 
-    <!-- セクション：グラフ -->
+    <!-- グラフ -->
     <section id="graph-section" class="card">
-      <h2>グラフ</h2>
+      <h2>実績推移グラフ</h2>
       <canvas id="performance-chart"></canvas>
     </section>
   </main>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // 外部JSON（data.json）をフェッチして描画
       fetch('data.json')
         .then(res => res.json())
         .then(data => {
@@ -115,12 +45,13 @@
           renderTop(data.records);
           renderChart(data.records);
         })
-        .catch(err => console.error('データの読み込みエラー:', err));
+        .catch(err => console.error(err));
     });
 
-    // 直近5件を日付降順で表示
     function renderLatest(records) {
-      const sorted = [...records].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5);
+      const sorted = [...records]
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .slice(0, 5);
       const table = document.getElementById('latest-table');
       table.innerHTML = `
         <thead>
@@ -135,9 +66,10 @@
       table.appendChild(tbody);
     }
 
-    // 上位5件を値の降順で表示
     function renderTop(records) {
-      const sorted = [...records].sort((a, b) => b.value - a.value).slice(0, 5);
+      const sorted = [...records]
+        .sort((a, b) => b.value - a.value)
+        .slice(0, 5);
       const table = document.getElementById('top-table');
       table.innerHTML = `
         <thead>
@@ -152,7 +84,6 @@
       table.appendChild(tbody);
     }
 
-    // Chart.js で折れ線グラフを描画
     function renderChart(records) {
       const labels = records.map(r => r.date);
       const dataPoints = records.map(r => r.value);
@@ -162,18 +93,18 @@
         data: {
           labels: labels,
           datasets: [{
-            label: '実績推移',
+            label: '値の推移',
             data: dataPoints,
             borderColor: '#111',
             backgroundColor: 'rgba(0,0,0,0.1)',
-            tension: 0.3,
+            tension: 0.3
           }]
         },
         options: {
-          animation: { duration: 1500 },
+          animation: { duration: 1200 },
           scales: {
-            x: { display: true, title: { display: true, text: '日付' } },
-            y: { display: true, title: { display: true, text: '値' } }
+            x: { title: { display: true, text: '日付' } },
+            y: { title: { display: true, text: '値' } }
           }
         }
       });
